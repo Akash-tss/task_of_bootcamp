@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <unistd.h>
 
+//creating even and odd locks 
 sem_t even_lock, odd_lock;
 
+//function pointer for even threads 
 void *even_thread(void *args)
 {
     int count = 0;
@@ -19,6 +22,7 @@ void *even_thread(void *args)
     pthread_exit(0);
 }
 
+//function pointer for oodd threads 
 void *odd_thread(void *args)
 {
     int count = 1;
@@ -35,16 +39,23 @@ void *odd_thread(void *args)
 
 int main()
 {
-
-    pthread_t thread[2];
+    //threads initialization
+    pthread_t thread1 , thread2;
+    
     sem_init(&even_lock, 0, 1);
     sem_init(&odd_lock, 0, 0);
 
-    printf("Solution\n");
-    pthread_create(&thread[0], NULL, even_thread, NULL);
-    pthread_create(&thread[1], NULL, odd_thread, NULL);
-    pthread_join(thread[0], NULL);
-    pthread_join(thread[1], NULL);
+    printf("Output for even and odd threads : \n");
+
+    //Used to create the threads  
+    pthread_create(&thread1, NULL, even_thread, NULL);
+    pthread_create(&thread2, NULL, odd_thread, NULL);
+
+    //used to manage the hread execution and ensuring that resources are properly released in a multithreaded program.
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+
+    //used to destroy the semophere locks 
     sem_destroy(&even_lock);
     sem_destroy(&odd_lock);
     return 0;
